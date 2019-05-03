@@ -113,6 +113,9 @@ public class GDPController
         return mav;
     }
     
+    //STRETCH GOALS HERE
+    
+    //localhost:2019/total
     @GetMapping(value="/total", produces={"application/json"})
     public ResponseEntity<?> getTotal()
     {
@@ -127,5 +130,24 @@ public class GDPController
         TotalGdp totalGdp = new TotalGdp(total);
         
         return new ResponseEntity<>(totalGdp, HttpStatus.OK);
+    }
+    
+    //localhost:2019/gdp/list/{startgdp}/{endgdp}
+    @GetMapping(value="/gdp/list/{lowGdp}/{highGdp}")
+    public ModelAndView gdpRange(@PathVariable long lowGdp, @PathVariable long highGdp)
+    {
+        
+        logger.info("/gdp/list/{startgdp}/{endgdp} has been accesssed with parameters: " + lowGdp + ", " + highGdp);
+        ArrayList<GDP> inRange = GdpApplication.ourList.findCountries(c -> (c.getGdp() >= lowGdp && c.getGdp() <= highGdp));
+        
+        if (inRange.size() == 0)
+        {
+            throw new ResourceNotFoundException("There are no countries within range: " + lowGdp + " - " + highGdp);
+        }
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("tables");
+        mav.addObject("gdpList", inRange);
+        return mav;
+        
     }
 }
