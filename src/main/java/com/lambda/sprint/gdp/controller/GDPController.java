@@ -1,6 +1,7 @@
 package com.lambda.sprint.gdp.controller;
 
 import com.lambda.sprint.gdp.GdpApplication;
+import com.lambda.sprint.gdp.exception.ResourceNotFoundException;
 import com.lambda.sprint.gdp.model.GDP;
 import com.lambda.sprint.gdp.model.GDPList;
 import org.springframework.http.HttpStatus;
@@ -44,8 +45,7 @@ public class GDPController
         
         if(selectedCountry == null)
         {
-            // delete return and throw error here
-            return new ResponseEntity<>("Oopsie woopsie!", HttpStatus.OK);
+            throw new ResourceNotFoundException("Country: " + country + " not found");
         } else
         {
             return new ResponseEntity<>(selectedCountry, HttpStatus.OK);
@@ -59,8 +59,7 @@ public class GDPController
         GDP selectedCountry = GdpApplication.ourList.findCountry(c -> c.getId() == id);
         if(selectedCountry == null)
         {
-            // delete return and throw error here
-            return new ResponseEntity<>("Oopsie woopsie!", HttpStatus.OK);
+            throw new ResourceNotFoundException("Country with ID: " + id + " not found");
         } else
         {
             return new ResponseEntity<>(selectedCountry, HttpStatus.OK);
@@ -77,17 +76,18 @@ public class GDPController
         return new ResponseEntity<>(orderedCountries.get(orderedCountries.size() /2), HttpStatus.OK);
     }
     
-    //localhost:2019/economy/greates/{gdp}
+    //localhost:2019/economy/greatest/{gdp}
     @GetMapping(value="/economy/greatest/{gdp}")
     public ModelAndView displayGdpTable(@PathVariable long gdp)
     {
         ArrayList<GDP> highGdp = GdpApplication.ourList.findCountries(c -> c.getGdp() >= gdp);
         
-        if(highGdp != null)
+        if(highGdp.size() == 0)
         {
-            //sorting array if it is not empty
-            highGdp.sort((g1, g2) -> (int)(g2.getGdp() - g1.getGdp()));
+            throw new ResourceNotFoundException("No countries with GDP above " + gdp + " found");
         }
+    
+        highGdp.sort((g1, g2) -> (int)(g2.getGdp() - g1.getGdp()));
         
         ModelAndView mav = new ModelAndView();
         mav.setViewName("tables");
