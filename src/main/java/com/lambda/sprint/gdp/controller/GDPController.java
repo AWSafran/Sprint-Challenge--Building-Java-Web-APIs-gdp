@@ -144,6 +144,8 @@ public class GDPController
         {
             throw new ResourceNotFoundException("There are no countries within range: " + lowGdp + " - " + highGdp);
         }
+        
+        inRange.sort((c1, c2) -> (int)(c1.getGdp() - c2.getGdp()));
         ModelAndView mav = new ModelAndView();
         mav.setViewName("tables");
         mav.addObject("gdpList", inRange);
