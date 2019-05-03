@@ -35,4 +35,9 @@ public class GDP
     {
         this.gdp = gdp;
     }
+    
+    public long getId()
+    {
+        return id;
+    }
 }

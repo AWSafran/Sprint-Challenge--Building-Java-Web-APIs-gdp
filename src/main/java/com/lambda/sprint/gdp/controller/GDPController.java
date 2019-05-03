@@ -51,4 +51,27 @@ public class GDPController
         }
         
     }
+    
+    @GetMapping(value="/country/{id}", produces = {"application/json"})
+    public ResponseEntity<?> getCountryById(@PathVariable long id)
+    {
+        GDP selectedCountry = GdpApplication.ourList.findCountry(c -> c.getId() == id);
+        if(selectedCountry == null)
+        {
+            // delete return and throw error here
+            return new ResponseEntity<>("Oopsie woopsie!", HttpStatus.OK);
+        } else
+        {
+            return new ResponseEntity<>(selectedCountry, HttpStatus.OK);
+        }
+    }
+    
+    @GetMapping(value="/country/stats/median", produces={"application/json"})
+    public ResponseEntity<?> getMedianGdp()
+    {
+        ArrayList<GDP> orderedCountries = GdpApplication.ourList.gdpList;
+        orderedCountries.sort((c1, c2) -> (int)(c2.getGdp() - c1.getGdp()));
+        
+        return new ResponseEntity<>(orderedCountries.get(orderedCountries.size() /2), HttpStatus.OK);
+    }
 }
