@@ -1,9 +1,11 @@
 package com.lambda.sprint.gdp.controller;
 
+import com.google.gson.JsonObject;
 import com.lambda.sprint.gdp.GdpApplication;
 import com.lambda.sprint.gdp.exception.ResourceNotFoundException;
 import com.lambda.sprint.gdp.model.GDP;
 import com.lambda.sprint.gdp.model.GDPList;
+import com.lambda.sprint.gdp.model.TotalGdp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -109,5 +111,21 @@ public class GDPController
         mav.setViewName("tables");
         mav.addObject("gdpList", GdpApplication.ourList.gdpList);
         return mav;
+    }
+    
+    @GetMapping(value="/total", produces={"application/json"})
+    public ResponseEntity<?> getTotal()
+    {
+        logger.info("/total has been accessed");
+        long total = 0;
+        
+        for(GDP g : GdpApplication.ourList.gdpList)
+        {
+            total += g.getGdp();
+        }
+    
+        TotalGdp totalGdp = new TotalGdp(total);
+        
+        return new ResponseEntity<>(totalGdp, HttpStatus.OK);
     }
 }
