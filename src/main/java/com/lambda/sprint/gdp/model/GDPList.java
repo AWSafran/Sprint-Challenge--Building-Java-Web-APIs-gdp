@@ -126,6 +126,19 @@ public class GDPList
         return null;
     }
     
+    public ArrayList<GDP> findCountries(CheckCountry tester)
+    {
+        ArrayList<GDP> approved = new ArrayList<>();
+        for (GDP g : gdpList)
+        {
+            if(tester.test(g))
+            {
+                approved.add(g);
+            }
+        }
+        return approved;
+    }
+    
     public ArrayList<GDP> getGdpList()
     {
         return gdpList;
